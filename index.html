@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player's Page</title>
+    <link rel="stylesheet" href="./styles/index.css">
+</head>
+
+<body>
+    <div id="navbar">
+        <div><a href="index.html">Players page</a></div>
+        <div><a href="games.html">Games page</a></div>
+    </div>
+    <!-- Search bar -->
+    <div id="searchbar" onsubmit="seachPlayer(event)">
+        <form>
+            <input type="text" id=name placeholder="search a player">
+            <input type="submit" value="Search">
+        </form>
+
+    </div>
+
+    <!-- ! Container -->
+    <section id="container">
+        <div id='all-players'>
+            <!-- <div class="playercard">
+                <div>
+                    <img src="https://www.juventus.com/images/image/private/t_portrait_mobile/dev/t5mex3dyn30xi3ox6ii5.jpg"
+                        alt="player_image">
+                </div>
+                <p>Name: </p>
+                <p>Position: </p>
+                <div><Button data-id="4" onclick="teamDetail(event)">Team Details</Button></div>
+            </div> -->
+        </div>
+        <div id="reder-team-detail">
+            <!-- <h2>Team Details</h2>
+            <p>Team : </p>
+            <p>Abbr : </p>
+            <p>Conference : </p>
+            <p>Division : </p>
+            <p>City : </p> -->
+        </div>
+
+    </section>
+
+    <section>
+        <button id="prev-pg" onclick="prevpage()">Prev Page</button>
+        <span id="page-no">PageNo 3</span>
+        <button id="next-pg" onclick="nextpage()">Next Page</button>
+    </section>
+
+
+</body>
+
+</html>
+
+<script>
+    const URL = 'https://www.balldontlie.io/api/v1'
+    let pageNo=0;
+    getPlayerData(pageNo)
+    async function seachPlayer(event){
+        try {
+            event.preventDefault();
+            let pname=event.target.name.value;
+            let response = await fetch(`${URL}/players?search=${pname}&per_page=10`);
+            let allData = await response.json();
+            console.log(allData);
+            renderPlayers(allData.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    function prevpage() {
+        if(pageNo>1){
+            getPlayerData(--pageNo)
+
+        }
+    }
+    function nextpage() {
+        getPlayerData(++pageNo)
+    }
+
+    function teamDetail(event) {
+        console.log(event.target.dataset.id);
+        getTeamData(event.target.dataset.id)
+
+    }
+    async function getPlayerData(pgno) {
+        try {
+            let response = await fetch(`${URL}/players?page=${pgno}&per_page=10`);
+            let allData = await response.json();
+            console.log(allData);
+            document.getElementById('page-no').innerHTML=pageNo;
+            renderPlayers(allData.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    function renderPlayers(data) {
+        document.getElementById('all-players').innerHTML = null;
+        document.getElementById('all-players').innerHTML = data.map((el) => {
+            return `
+            <div class="playercard">
+                <div>
+                    <img src="https://www.juventus.com/images/image/private/t_portrait_mobile/dev/t5mex3dyn30xi3ox6ii5.jpg"
+                        alt="player_image">
+                </div>
+                <p>Name:${el.first_name + el.last_name} </p>
+                <p>Position: ${el.position}</p>
+                <div><Button data-id="${el.id}" onclick="teamDetail(event)">Team Details</Button></div>
+            </div>
+            `
+        }).join('');
+
+    }
+
+
+    async function getTeamData(teamid) {
+        try {
+            let response = await fetch(`${URL}/teams/${teamid}`);
+            if (response.ok) {
+                let allData = await response.json();
+                console.log('okay');
+                renderTeamDetails(true, allData)
+            }
+            else {
+
+                renderTeamDetails(false, {})
+                console.log('not okay');
+            }
+
+            console.log(allData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    function renderTeamDetails(status, data) {
+
+        if (status) {
+            document.getElementById('reder-team-detail').innerHTML = null;
+            document.getElementById('reder-team-detail').innerHTML = `
+                <h2>Team Details</h2>
+                <p>Team :${data.full_name} </p>
+                <p>Abbr :${data.abbreviation} </p>
+                <p>Conference : ${data.conference}</p>
+                <p>Division : ${data.division}</p>
+                <p>City :${data.city} </p>            
+                `
+
+        }
+        else {
+            document.getElementById('reder-team-detail').innerHTML = null;
+            document.getElementById('reder-team-detail').innerHTML = `No Data found`
+        }
+
+
+    }
+
+
+</script>

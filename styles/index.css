@@ -1,0 +1,28 @@
+#navbar{
+    display: flex;
+    justify-content: space-around;
+    background-color: aqua;
+}
+a{
+    text-decoration: none;
+}
+/* Container */
+img{
+    width: 100%;
+}
+#container{
+    display: flex;
+    justify-content: space-around;
+    
+}
+
+#reder-team-detail{
+    width: 50%;
+}
+
+#all-players{
+    display: grid;
+    grid-template-columns: repeat(5,0.5fr);
+    grid-template-rows: auto;
+    gap: 10px;
+}

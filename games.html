@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game's page</title>
+    <link rel="stylesheet" href="./styles/games.css">
+</head>
+
+<body>
+    <div id="navbar">
+        <div><a href="index.html">Players page</a></div>
+        <div><a href="games.html">Games page</a></div>
+    </div>
+
+    <div>
+        <form id='gameform'>
+            <input type="date" name="" id="st-date">
+            <input type="date" name="" id="end-date">
+            <input type="submit" value="Search">
+        </form>
+    </div>
+</body>
+
+</html>
+
+<script>
+    let gameForm=document.getElementById('gameform');
+    let stdate=document.getElementById('st-date');
+    let endDate=document.getElementById('end-date');
+    let url='https://www.balldontlie.io/api/v1/games';
+    gameForm.addEventListener('submit',async(e)=>{
+        e.preventDefault();
+        let response=await fetch(`${url}?start_date=${stdate.value}&end_date=${endDate.value}`);
+        let alldata=await response.json();
+        console.log(alldata);
+    })
+
+    
+
+</script>
